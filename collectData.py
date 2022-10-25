@@ -17,19 +17,23 @@ headers = {
 
 dict = []
 for offset in range(0, 10000, 50):
-    time.sleep(0.13)
-    querystring = {"city":"Houston","state":"TX","limit":"50","offset": f"{offset}"}
-    response = requests.request("GET", url, headers=headers, params=querystring)
-    print(offset, response)
-    toJson = json.loads(response.text)
+    try:
+        querystring = {"latitude":"29.75725157231662","longitude":"-95.36122222205765","radius":"80","limit":"50","offset":f"{offset}"}
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        print(offset, response)
+        toJson = json.loads(response.text)
 
-    for listing in toJson:
-        dict.append(listing)
+        for listing in toJson:
+            dict.append(listing)
 
+
+    except:
+        continue
 
 with open("CollectedData.tsv", "w") as output_file:
-    dw = csv.DictWriter(output_file, sorted(dict[0].keys()), delimiter='\t', lineterminator='\n')
+    dw = csv.DictWriter(output_file, sorted(dict[0].keys()), delimiter='\t', lineterminator='\n', extrasaction='ignore')
     dw.writeheader()
     dw.writerows(dict)
+
 
 
